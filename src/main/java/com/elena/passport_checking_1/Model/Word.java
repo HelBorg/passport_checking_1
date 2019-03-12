@@ -6,6 +6,13 @@ public class Word {
     private int vowel;
     private int consonant;
 
+    public Word(String word) {
+        this.word = word;
+        this.updateLen();
+        this.updateVowel();
+        this.updateConsonant();
+    }
+
     public String getWord() {
         return word;
     }

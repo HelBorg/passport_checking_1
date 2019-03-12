@@ -24,6 +24,10 @@ public class Passport {
 
     private String deliveryPlace;
 
+    public Passport() {
+        super();
+    }
+
     public Passport(FullName fullName, String sex, int number, int series,
                     Date birthday, String birthplace, Date deliveryDay,
                     String deliveryPlace) {

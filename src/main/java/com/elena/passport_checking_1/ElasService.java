@@ -1,13 +1,12 @@
 package com.elena.passport_checking_1;
 
-import org.elasticsearch.action.get.GetRequest;
+import com.elena.passport_checking_1.Model.FullName;
+import com.elena.passport_checking_1.Model.Passport;
+import com.elena.passport_checking_1.Model.Word;
 import org.elasticsearch.action.get.GetResponse;
-import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.TransportAddress;
-import org.elasticsearch.common.xcontent.XContentBuilder;
-import org.elasticsearch.common.xcontent.XContentFactory;
 import org.elasticsearch.transport.client.PreBuiltTransportClient;
 
 import java.io.IOException;
@@ -16,29 +15,55 @@ import java.util.Scanner;
 import java.util.concurrent.ExecutionException;
 
 public class ElasService {
-    private TransportClient client;
+    private static Passport getPassport() {
+        Scanner scanner = new Scanner(System.in);
+        Passport passport = new Passport();
 
-    public void Service() throws IOException, ExecutionException, InterruptedException {
+        System.out.println("Write down first name, second name and last name");
+        passport.setFullName(new FullName(
+                new Word(scanner.nextLine()),
+                new Word(scanner.nextLine()),
+                new Word(scanner.nextLine())));
 
+        System.out.println("Write down sex");
+        passport.setSex(scanner.nextLine());
+
+        System.out.println("Write down number of passport");
+        passport.setNumber(Integer.parseInt(scanner.nextLine()));
+
+        System.out.println("Write down series of passport");
+        passport.setSeries(Integer.parseInt(scanner.nextLine()));
+
+        return passport;
+    }
+
+    public static void Service() throws IOException, ExecutionException, InterruptedException {
+        TransportClient client;
         client = new PreBuiltTransportClient(Settings.EMPTY)
                 .addTransportAddress(new TransportAddress(InetAddress.getByName("localhost"), 9300));
 
-        Service ser = new Service();
+        Service ser = new Service(client);
+
         Scanner scanner = new Scanner(System.in);
+        String input;
 
         while(true) {
-            System.out.println("Menu:\n -Add\n -Delete\n");
-            String input = scanner.nextLine();
+            System.out.println("Menu:\n -Add\n -Get\n -Delete\n -Exit\n");
+            input = scanner.nextLine();
             switch (input) {
                 case "Add":
-                    ser.Add(client,"passportchecking", "fullname", "3");
+                    Passport passport = getPassport();
+                    ser.Add(client,"passportchecking", "fullname", passport);
                     break;
                 case "Get":
-                    ser.Get(client, "passportchecking", "fullname", "1");
+                    GetResponse response = ser.Get(client, "passportchecking", "fullname");
+                    System.out.println(response);
                     break;
                 case "Delete":
+                    ser.Delete(client, "passportchecking", "fullname", "-1");
                     break;
                 case "Exit":
+                    client.close();
                     continue;
                 default:
                     System.out.println("Something got wrong");
