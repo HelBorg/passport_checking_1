@@ -13,10 +13,8 @@ public class Passport {
     private String sex;
 
     private int number;
-    private int lenNumber;
 
     private int series;
-    private int lenSeries;
 
     private Date birthday;
 
@@ -31,17 +29,14 @@ public class Passport {
     }
 
     public Passport(String firstName, String secondName, String lastName,
-                    String sex, int number, int lenNumber, int series,
-                    int lenSeries, Date birthday, String birthplace,
-                    Date deliveryDay, String deliveryPlace) {
+                    String sex, int number, int series, Date birthday,
+                    String birthplace, Date deliveryDay, String deliveryPlace) {
         this.firstName = firstName;
         this.secondName = secondName;
         this.lastName = lastName;
         this.sex = sex;
         this.number = number;
-        this.lenNumber = lenNumber;
         this.series = series;
-        this.lenSeries = lenSeries;
         this.birthday = birthday;
         this.birthplace = birthplace;
         this.deliveryDay = deliveryDay;

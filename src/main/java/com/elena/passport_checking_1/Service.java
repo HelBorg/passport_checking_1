@@ -58,6 +58,13 @@ public class Service {
                 .field("firstname", passport.getFirstName())
                 .field("secondname", passport.getSecondName())
                 .field("lastname", passport.getLastName())
+                .field("sex", passport.getSex())
+                .field("number", passport.getNumber())
+                .field("series", passport.getSeries())
+                .field("birthday", passport.getBirthday())
+                .field("birthplace", passport.getBirthplace())
+                .field("deliveryDay", passport.getDeliveryDay())
+                .field("deliveryPlace", passport.getDeliveryPlace())
                 .endObject();
 
         IndexResponse response = client.prepareIndex(index, type, id)
