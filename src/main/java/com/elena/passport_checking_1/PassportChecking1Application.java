@@ -9,11 +9,11 @@ public class PassportChecking1Application {
 
     public static void main(String[] args) {
         SpringApplication.run(PassportChecking1Application.class, args);
+        ElasService service = new ElasService();
         try{
-            ElasService.Service();
+            service.Service();
         } catch (Exception e) {
             System.err.println(e);
         }
     }
-
 }

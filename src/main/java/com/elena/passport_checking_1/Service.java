@@ -1,6 +1,6 @@
 package com.elena.passport_checking_1;
 
-import com.elena.passport_checking_1.Model.Passport;
+import com.elena.passport_checking_1.model.Passport;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.get.GetRequest;
@@ -23,7 +23,29 @@ public class Service {
         scanner = new Scanner(System.in);
     }
 
-    public IndexResponse Add(TransportClient client, String index, String type, Passport passport) throws IOException, ExecutionException, InterruptedException {
+    private Passport getPassport() {
+        Scanner scanner = new Scanner(System.in);
+        Passport passport = new Passport();
+
+        System.out.println("Write down first name, second name and last name");
+        passport.setFirstName(scanner.nextLine());
+        passport.setSecondName(scanner.nextLine());
+        passport.setLastName(scanner.nextLine());
+
+        System.out.println("Write down sex");
+        passport.setSex(scanner.nextLine());
+
+        System.out.println("Write down number of passport");
+        passport.setNumber(Integer.parseInt(scanner.nextLine()));
+
+        System.out.println("Write down series of passport");
+        passport.setSeries(Integer.parseInt(scanner.nextLine()));
+
+        return passport;
+    }
+
+    public IndexResponse Add(TransportClient client, String index, String type) throws IOException, ExecutionException, InterruptedException {
+        Passport passport = getPassport();
         System.out.println("By what id put new data?\n");
         String id = this.scanner.nextLine();
 
@@ -33,9 +55,9 @@ public class Service {
 
         XContentBuilder builder = XContentFactory.jsonBuilder()
                 .startObject()
-                .field("firstname", passport.getFullName().getFirstName())
-                .field("secondname", passport.getFullName().getSecondName())
-                .field("lastname", passport.getFullName().getLastName())
+                .field("firstname", passport.getFirstName())
+                .field("secondname", passport.getSecondName())
+                .field("lastname", passport.getLastName())
                 .endObject();
 
         IndexResponse response = client.prepareIndex(index, type, id)
@@ -43,17 +65,21 @@ public class Service {
         return response;
     }
 
+    public IndexResponse Update(TransportClient client, String index, String type) throws InterruptedException, ExecutionException, IOException {
+        return this.Add(client, index, type);
+    }
+
     public GetResponse Get(TransportClient client, String index, String type) throws ExecutionException, InterruptedException {
         System.out.println("Write down an id\n");
         String id = scanner.nextLine();
         GetResponse response = client.get(new GetRequest(index, type, id)).get();
-        System.out.println(response);
         return response;
     }
 
     public boolean Exist(TransportClient client, String index, String type, String id) throws ExecutionException, InterruptedException {
         GetResponse response = client.get(new GetRequest(index, type, id)).get();
         System.out.println(response);
+        System.out.println(response.getField("found"));
         return true;
     }
 

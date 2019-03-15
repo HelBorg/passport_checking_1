@@ -1,4 +1,4 @@
-package com.elena.passport_checking_1.Model;
+package com.elena.passport_checking_1.model;
 
 import java.util.Date;
 
@@ -6,7 +6,9 @@ import static java.lang.Math.floor;
 import static java.lang.Math.log10;
 
 public class Passport {
-    private FullName fullName;
+    private String firstName;
+    private String secondName;
+    private String lastName;
 
     private String sex;
 
@@ -28,23 +30,34 @@ public class Passport {
         super();
     }
 
-    public Passport(FullName fullName, String sex, int number, int series,
-                    Date birthday, String birthplace, Date deliveryDay,
-                    String deliveryPlace) {
-        this.fullName = fullName;
+    public Passport(String firstName, String secondName, String lastName,
+                    String sex, int number, int lenNumber, int series,
+                    int lenSeries, Date birthday, String birthplace,
+                    Date deliveryDay, String deliveryPlace) {
+        this.firstName = firstName;
+        this.secondName = secondName;
+        this.lastName = lastName;
         this.sex = sex;
         this.number = number;
-        updateLenNumber();
+        this.lenNumber = lenNumber;
         this.series = series;
-        updateLenSeries();
+        this.lenSeries = lenSeries;
         this.birthday = birthday;
         this.birthplace = birthplace;
         this.deliveryDay = deliveryDay;
         this.deliveryPlace = deliveryPlace;
     }
 
-    public FullName getFullName() {
-        return fullName;
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public String getSecondName() {
+        return secondName;
+    }
+
+    public String getLastName() {
+        return lastName;
     }
 
     public String getSex() {
@@ -54,6 +67,7 @@ public class Passport {
     public int getNumber() {
         return number;
     }
+
     public int getSeries() {
         return series;
     }
@@ -74,8 +88,16 @@ public class Passport {
         return deliveryPlace;
     }
 
-    public void setFullName(FullName fullName) {
-        this.fullName = fullName;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public void setSecondName(String secondName) {
+        this.secondName = secondName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     public void setSex(String sex) {
