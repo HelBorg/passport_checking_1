@@ -25,14 +25,11 @@ public class ElasService {
         String input;
 
         while (true) {
-            System.out.println("Menu:\n -Add\n -Get\n -Delete\n -Exit\n");
+            System.out.println("Menu:\n Data: -Add\n -Get\n -Delete\n -Exit\n");
             input = scanner.nextLine();
             switch (input) {
                 case "Add":
                     ser.Add(client, "passportchecking", "fullname");
-                    break;
-                case "Update":
-                    ser.Update(client, "passportchecking", "fullname");
                     break;
                 case "Get":
                     GetResponse response = ser.Get(client, "passportchecking", "fullname");

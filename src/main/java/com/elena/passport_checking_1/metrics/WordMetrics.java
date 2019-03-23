@@ -39,4 +39,20 @@ public class WordMetrics {
         }
         this.letterRepeat = counter;
     }
+
+    public int getLen() {
+        return len;
+    }
+
+    public int getVowel() {
+        return vowel;
+    }
+
+    public int getConsonant() {
+        return consonant;
+    }
+
+    public int getLetterRepeat() {
+        return letterRepeat;
+    }
 }

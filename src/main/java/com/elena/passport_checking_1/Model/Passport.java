@@ -1,9 +1,8 @@
 package com.elena.passport_checking_1.model;
 
-import java.util.Date;
+import com.elena.passport_checking_1.metrics.Metrics;
 
-import static java.lang.Math.floor;
-import static java.lang.Math.log10;
+import java.util.Date;
 
 public class Passport {
     private String firstName;
@@ -23,6 +22,8 @@ public class Passport {
     private Date deliveryDay;
 
     private String deliveryPlace;
+
+    private Metrics metrics;
 
     public Passport() {
         super();
@@ -101,20 +102,10 @@ public class Passport {
 
     public void setNumber(int number) {
         this.number = number;
-        updateLenNumber();
-    }
-
-    public void updateLenNumber() {
-        this.lenNumber = (int) floor(log10(this.number)) + 1;
     }
 
     public void setSeries(int series) {
         this.series = series;
-        updateLenSeries();
-    }
-
-    public void updateLenSeries() {
-        this.lenSeries = (int) floor(log10(this.series)) + 1;
     }
 
     public void setBirthday(Date birthday) {
@@ -131,5 +122,14 @@ public class Passport {
 
     public void setDeliveryPlace(String deliveryPlace) {
         this.deliveryPlace = deliveryPlace;
+    }
+
+    public void updateMetrics() {
+        this.metrics.updateMetrics(this);
+
+        }
+
+    public Metrics getMetrics() {
+        return metrics;
     }
 }

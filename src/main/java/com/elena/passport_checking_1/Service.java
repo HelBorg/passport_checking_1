@@ -53,6 +53,8 @@ public class Service {
             this.Delete(client, index, type, id);
         }
 
+        passport.updateMetrics();
+
         XContentBuilder builder = XContentFactory.jsonBuilder()
                 .startObject()
                 .field("firstname", passport.getFirstName())
@@ -65,15 +67,18 @@ public class Service {
                 .field("birthplace", passport.getBirthplace())
                 .field("deliveryDay", passport.getDeliveryDay())
                 .field("deliveryPlace", passport.getDeliveryPlace())
+                .field("FNMlen", passport.getMetrics().getFirstNameMetrics().getLen())
+                .field("FNMcons", passport.getMetrics().getFirstNameMetrics().getConsonant())
+                .field("FNMvow", passport.getMetrics().getFirstNameMetrics().getVowel())
+                .field("FNMrepeat", passport.getMetrics().getFirstNameMetrics().getLetterRepeat())
+                .field("age", passport.getMetrics().getLastNameMetrics())
+                .field("lenNumber", passport.getMetrics().getLenNumber())
+                .field("lenSeries", passport.getMetrics().getLenSeries())
                 .endObject();
 
         IndexResponse response = client.prepareIndex(index, type, id)
                 .setSource(builder).get();
         return response;
-    }
-
-    public IndexResponse Update(TransportClient client, String index, String type) throws InterruptedException, ExecutionException, IOException {
-        return this.Add(client, index, type);
     }
 
     public GetResponse Get(TransportClient client, String index, String type) throws ExecutionException, InterruptedException {
