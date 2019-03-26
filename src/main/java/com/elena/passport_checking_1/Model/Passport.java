@@ -132,4 +132,32 @@ public class Passport {
     public void setDeliveryPlace(String deliveryPlace) {
         this.deliveryPlace = deliveryPlace;
     }
+<<<<<<< master
+=======
+
+    public void updateMetrics() {
+        this.metrics.updateMetrics(this);
+
+        }
+
+    public Metrics getMetrics() {
+        return metrics;
+    }
+
+    public Object getField(String str) {
+        switch(str) {
+            case "FirstName":
+                return this.firstName;
+            case "SecondName":
+                return this.secondName;
+            case "LastName":
+                return this.lastName;
+            case "Number":
+                return this.number;
+            case "Series":
+                return this.series;
+        }
+        return null;
+    }
+>>>>>>> local
 }
