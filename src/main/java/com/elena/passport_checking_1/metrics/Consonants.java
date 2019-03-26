@@ -13,7 +13,7 @@ public class Consonants implements Metric<Integer> {
 
     @Override
     public void calc(Passport p) {
-        String str = p.getField(this.field);
+        String str = (String)p.getField(this.field);
         this.consonants = str.length() - str.toLowerCase()
                 .replaceAll("а|о|е|и|у|я", "").length();
     }
