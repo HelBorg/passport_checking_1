@@ -5,19 +5,21 @@ import com.elena.passport_checking_1.model.Passport;
 import static java.lang.Math.floor;
 import static java.lang.Math.log10;
 
-public class LenNumber implements Metric<Integer> {
+public abstract class LenNumber extends FieldMetrics<Integer> {
     private Integer len;
-    protected String field;
 
-    public LenNumber(Passport p, String field) {
-        this.field = field;
+    public LenNumber(Passport p) {
         this.calc(p);
+    }
+
+    public LenNumber(Integer len) {
+        this.len = len;
     }
 
     @Override
     public void calc(Passport p) {
-        Integer str = (int) p.getField(field);
-        this.len = (int) floor(log10(str)) + 1;
+        Integer str = getFieldValue(p);
+        this.len = new Integer((int)(floor(log10(str)) + 1));
     }
 
     @Override

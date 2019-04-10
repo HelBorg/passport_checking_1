@@ -11,6 +11,10 @@ public class AgeOfGetting implements Metric<Integer> {
         this.calc(p);
     }
 
+    public AgeOfGetting(Integer ageOfGetting) {
+        this.ageOfGetting = ageOfGetting;
+    }
+
     @Override
     public void calc(Passport p) {
         Calendar delivery = Calendar.getInstance();

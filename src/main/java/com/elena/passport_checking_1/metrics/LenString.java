@@ -2,18 +2,20 @@ package com.elena.passport_checking_1.metrics;
 
 import com.elena.passport_checking_1.model.Passport;
 
-public class LenString implements Metric<Integer> {
+public abstract class LenString extends FieldMetrics<String> {
     private Integer len;
-    public String field;
 
-    public LenString(Passport p, String field) {
-        this.field = field;
-        this.calc(p);
+    public LenString(Passport p) {
+       this.calc(p);
+    }
+
+    public LenString(Integer len) {
+        this.len = len;
     }
 
     @Override
     public void calc(Passport p) {
-        String str = p.getField(this.field);
+        String str = getFieldValue(p);
         this.len = str.length();
     }
 
@@ -21,4 +23,6 @@ public class LenString implements Metric<Integer> {
     public Integer getValue() {
         return len;
     }
+
+
 }

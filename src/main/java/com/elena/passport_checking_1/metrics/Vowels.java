@@ -2,18 +2,20 @@ package com.elena.passport_checking_1.metrics;
 
 import com.elena.passport_checking_1.model.Passport;
 
-public class Vowels implements Metric<Integer> {
+public abstract class Vowels extends FieldMetrics<String> {
     private Integer vowels;
-    public String field;
 
-    public Vowels(Passport p, String str) {
-        this.field = str;
+    public Vowels(Passport p) {
         this.calc(p);
+    }
+
+    public Vowels(Integer vowels) {
+        this.vowels = vowels;
     }
 
     @Override
     public void calc(Passport p) {
-        String str = p.getField(this.field);
+        String str = getFieldValue(p);
         this.vowels = str.toLowerCase()
                 .replaceAll("а|о|е|и|у|я", "").length();
     }

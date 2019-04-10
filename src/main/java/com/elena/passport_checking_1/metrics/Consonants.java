@@ -2,18 +2,20 @@ package com.elena.passport_checking_1.metrics;
 
 import com.elena.passport_checking_1.model.Passport;
 
-public class Consonants implements Metric<Integer> {
+public abstract class Consonants extends FieldMetrics<String> {
     private Integer consonants;
-    public String field;
 
-    public Consonants(Passport p, String str) {
-        this.field = str;
+    public Consonants(Passport p) {
         this.calc(p);
+    }
+
+    public Consonants(Integer consonants) {
+        this.consonants = consonants;
     }
 
     @Override
     public void calc(Passport p) {
-        String str = (String)p.getField(this.field);
+        String str = getFieldValue(p);
         this.consonants = str.length() - str.toLowerCase()
                 .replaceAll("а|о|е|и|у|я", "").length();
     }

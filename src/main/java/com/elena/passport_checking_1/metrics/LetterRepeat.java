@@ -2,26 +2,33 @@ package com.elena.passport_checking_1.metrics;
 
 import com.elena.passport_checking_1.model.Passport;
 
-public abstract class LetterRepete extends FieldMetrics<String> {
+public abstract class LetterRepeat extends FieldMetrics<String> {
     private Integer letterRepeat;
-    public String field;
 
-    protected LetterRepeate(Passport p) {
+    public LetterRepeat(Passport p) {
         this.calc(p);
+    }
+
+    public LetterRepeat(Integer letterRepeat) {
+        this.letterRepeat = letterRepeat;
     }
 
     @Override
     public void calc(Passport p) {
         String str = getFieldValue(p);
-        int counter = 0;
-        for (int i = 0; i < str.length(); i++) {
-            if (str.charAt(i) == str.charAt(i + 1)) {
-                counter++;
-            } else {
-                counter = 0;
+        int counter = 1;
+
+        int length = str.length();
+        if(length > 0) {
+            for (int i = 0; i < length - 1; i++) {
+                if (str.charAt(i) == str.charAt(i + 1)) {
+                    counter++;
+                } else {
+                    counter = 1;
+                }
             }
         }
-        this.letterRepeat = counter;
+        this.letterRepeat = new Integer(counter);
     }
 
     @Override

@@ -2,49 +2,63 @@ package com.elena.passport_checking_1.model;
 
 import com.elena.passport_checking_1.metrics.Metrics;
 
+import javax.persistence.Entity;
+import javax.persistence.*;
 import java.util.Date;
 
-import static java.lang.Math.floor;
-import static java.lang.Math.log10;
-
+@Entity
+@Table(name = "passports")
 public class Passport {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
+
+    @Column(name="first_name")
     private String firstName;
+
+    @Column(name="second_name")
     private String secondName;
+
+    @Column(name="last_name")
     private String lastName;
 
-    private String sex;
-
-    private int number;
-
-    private int series;
-
+    @Column(name="birthday")
     private Date birthday;
 
+    @Column(name="sex")
+    private String sex;
+
+    @Column(name="place_of_birth")
     private String birthplace;
 
-    private Date deliveryDay;
-
+    @Column(name="place_of_issue")
     private String deliveryPlace;
 
-    private Metrics metrics;
+    @Column(name="date_of_issue")
+    private Date deliveryDay;
+
+    @Column(name="passport_id")
+    private Integer number;
+
+    @Column(name="passport_series")
+    private Integer series;
 
     public Passport() {
         super();
     }
 
-    public Passport(String firstName, String secondName, String lastName,
-                    String sex, int number, int series, Date birthday,
-                    String birthplace, Date deliveryDay, String deliveryPlace) {
+    public Passport(String firstName, String secondName, String lastName, Date birthday,
+                    String sex, String birthplace, String deliveryPlace, Date deliveryDay, Integer number, Integer series) {
         this.firstName = firstName;
         this.secondName = secondName;
         this.lastName = lastName;
+        this.birthday = birthday;
         this.sex = sex;
+        this.birthplace = birthplace;
+        this.deliveryPlace = deliveryPlace;
+        this.deliveryDay = deliveryDay;
         this.number = number;
         this.series = series;
-        this.birthday = birthday;
-        this.birthplace = birthplace;
-        this.deliveryDay = deliveryDay;
-        this.deliveryPlace = deliveryPlace;
     }
 
     public String getFirstName() {
@@ -63,11 +77,11 @@ public class Passport {
         return sex;
     }
 
-    public int getNumber() {
+    public Integer getNumber() {
         return number;
     }
 
-    public int getSeries() {
+    public Integer getSeries() {
         return series;
     }
 
@@ -103,11 +117,11 @@ public class Passport {
         this.sex = sex;
     }
 
-    public void setNumber(int number) {
+    public void setNumber(Integer number) {
         this.number = number;
     }
 
-    public void setSeries(int series) {
+    public void setSeries(Integer series) {
         this.series = series;
     }
 
@@ -125,29 +139,5 @@ public class Passport {
 
     public void setDeliveryPlace(String deliveryPlace) {
         this.deliveryPlace = deliveryPlace;
-    }
-
-    public void updateMetrics() {
-        this.metrics.updateMetrics(this);
-    }
-
-    public Metrics getMetrics() {
-        return metrics;
-    }
-
-    public Object getField(String str) {
-        switch(str) {
-            case "FirstName":
-                return this.firstName;
-            case "SecondName":
-                return this.secondName;
-            case "LastName":
-                return this.lastName;
-            case "Number":
-                return this.number;
-            case "Series":
-                return this.series;
-        }
-        return null;
     }
 }

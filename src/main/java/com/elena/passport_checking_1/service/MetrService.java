@@ -1,8 +1,7 @@
-package com.elena.passport_checking_1;
+package com.elena.passport_checking_1.service;
 
 import com.elena.passport_checking_1.metrics.Metric;
 import com.elena.passport_checking_1.metrics.Metrics;
-import com.elena.passport_checking_1.model.Passport;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.get.GetRequest;
@@ -13,63 +12,75 @@ import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
 
 import java.io.IOException;
-import java.util.Scanner;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
-public class Service {
+public class MetrService {
     private TransportClient client;
-    private Scanner scanner;
+    private Integer maxNumber;
 
-    public Service(TransportClient client) {
+    public MetrService(TransportClient client) throws ExecutionException, InterruptedException {
         this.client = client;
+        this.maxNumber = (int) client.get(new GetRequest("passport_checking", "metrics", "0"))
+                .get().getSource().get("0");
     }
 
-    public IndexResponse add(TransportClient client, String index, String type, Metrics metrics) throws IOException, ExecutionException, InterruptedException {
-        System.out.println("By what id put new data?\n");
-        String id = this.scanner.nextLine();
+    public void updateNumOfRec() throws IOException {
+        client.prepareIndex("passport_checking", "metrics", "0").setSource(
+                XContentFactory.jsonBuilder().startObject().field("0",maxNumber).endObject());
+    }
 
-        if (!this.exist(client, index, type, id)) {
-            this.delete(client, index, type, id);
+    public void add(Metrics metrics, int passport_id)
+            throws IOException, ExecutionException, InterruptedException {
+
+        if (passport_id > maxNumber) {
+            maxNumber = passport_id;
         }
 
+        XContentBuilder builder = XContentFactory.jsonBuilder();
+        builder.startObject();
         for (Metric<Integer> metric : metrics.getMetrics()) {
-//            XContentBuilder builder = XContent
+            builder.field(Integer.toString(maxNumber), metric.getValue());
+            this.maxNumber = this.maxNumber + 1;
         }
-        XContentBuilder builder = XContentFactory.jsonBuilder()
-                .startObject()
-//                .field("firstname", passport.getFirstName())
-                .endObject();
-
-        IndexResponse response = client.prepareIndex(index, type, id)
-                .setSource(builder).get();
-        return response;
+        builder.endObject();
+        IndexResponse response = client.prepareIndex("passport_checking", "metrics",
+                Integer.toString(passport_id)).setSource(builder).get();
+        this.updateNumOfRec();
     }
 
-    public IndexResponse update(TransportClient client, String index, String type, Metrics metrics) throws InterruptedException, ExecutionException, IOException {
-        return this.add(client, index, type, metrics);
+    public Map<String, Object> get(int passport_id) throws ExecutionException, InterruptedException {
+        GetResponse response = client.get(new GetRequest("passport_checking", "metrics",
+                Integer.toString(passport_id))).get();
+        return response.getSource();
     }
 
-    public GetResponse get(TransportClient client, String index, String type) throws ExecutionException, InterruptedException {
-        System.out.println("Write down an id\n");
-        String id = scanner.nextLine();
-        GetResponse response = client.get(new GetRequest(index, type, id)).get();
-        return response;
+    public List<Map<String, Object>> getAll() throws ExecutionException, InterruptedException {
+        List<Map<String, Object>> listMetrics = new ArrayList<>();
+        for (int i = 1; i < maxNumber; i++) {
+            listMetrics.add(this.get(i));
+        }
+        return listMetrics;
     }
 
-    public boolean exist(TransportClient client, String index, String type, String id) throws ExecutionException, InterruptedException {
-        GetResponse response = client.get(new GetRequest(index, type, id)).get();
+    public boolean exist(int id) throws ExecutionException, InterruptedException {
+        GetResponse response = client.get(new GetRequest("passport_checking", "metrics",
+                Integer.toString(id))).get();
         System.out.println(response);
         System.out.println(response.getField("found"));
         return true;
     }
 
-    public DeleteResponse delete(TransportClient client, String index, String type, String id) throws ExecutionException, InterruptedException {
-        if (id.equals("-1")) {
-            System.out.println(" Write down id\n");
-            id = scanner.nextLine();
-        }
-        DeleteResponse response = client.delete(new DeleteRequest(index,type,id)).get();
-        System.out.println(response);
+    public DeleteResponse delete(int id) throws ExecutionException, InterruptedException, IOException {
+        DeleteResponse response = client.delete(new DeleteRequest("passport_checking", "metrics",
+                Integer.toString(id))).get();
+        this.updateNumOfRec();
         return response;
     }
+
+//    public void max() {
+//        client.
+//    }
 }
