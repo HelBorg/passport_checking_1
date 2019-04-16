@@ -4,12 +4,18 @@ import com.elena.passport_checking_1.metrics.Metric;
 import com.elena.passport_checking_1.metrics.Metrics;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.delete.DeleteResponse;
-import org.elasticsearch.action.get.GetRequest;
-import org.elasticsearch.action.get.GetResponse;
+import org.elasticsearch.action.get.*;
 import org.elasticsearch.action.index.IndexResponse;
+import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.aggregations.Aggregation;
+import org.elasticsearch.search.aggregations.AggregationBuilders;
+import org.elasticsearch.search.aggregations.bucket.range.Range;
+import org.elasticsearch.search.aggregations.metrics.max.Max;
+import org.elasticsearch.search.aggregations.metrics.min.Min;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -29,7 +35,7 @@ public class MetrService {
 
     public void updateNumOfRec() throws IOException {
         client.prepareIndex("passport_checking", "metrics", "0").setSource(
-                XContentFactory.jsonBuilder().startObject().field("0",maxNumber).endObject());
+                XContentFactory.jsonBuilder().startObject().field("0", maxNumber).endObject());
     }
 
     public void add(Metrics metrics, int passport_id)
@@ -59,8 +65,13 @@ public class MetrService {
 
     public List<Map<String, Object>> getAll() throws ExecutionException, InterruptedException {
         List<Map<String, Object>> listMetrics = new ArrayList<>();
+        MultiGetRequest request = new MultiGetRequest();
         for (int i = 1; i < maxNumber; i++) {
-            listMetrics.add(this.get(i));
+            request.add("passport_checking", "metrics", Integer.toString(i));
+        }
+        MultiGetResponse response = client.multiGet(request).get();
+        for (int i = 0; i < response.getResponses().length; i++) {
+            listMetrics.add(response.getResponses()[i].getResponse().getSource());
         }
         return listMetrics;
     }
@@ -80,7 +91,52 @@ public class MetrService {
         return response;
     }
 
-//    public void max() {
-//        client.
-//    }
+    public List<Double> getMax(Long metric_id) {
+        SearchResponse sr = client
+                .prepareSearch("passport_checking")
+                .setTypes("metrics")
+                .setQuery(QueryBuilders.matchAllQuery())
+                .addAggregation(
+                        AggregationBuilders.max("max").field(Long.toString(metric_id)))
+                .execute().actionGet();
+        List<Double> list  = new ArrayList<>();
+        for (Aggregation maxAggs : sr.getAggregations()) {
+            Max max = (Max) maxAggs;
+            list.add(max.getValue());
+        }
+        return list;
+    }
+
+    public List<Double> getMin(Long metric_id) {
+        SearchResponse sr = client
+                .prepareSearch("passport_checking")
+                .setTypes("metrics")
+                .setQuery(QueryBuilders.matchAllQuery())
+                .addAggregation(
+                        AggregationBuilders.min("min").field(Long.toString(metric_id)))
+                .execute().actionGet();
+        List<Double> list  = new ArrayList<>();
+        for (Aggregation minAggs : sr.getAggregations()) {
+            Min min = (Min) minAggs;
+            list.add(min.getValue());
+        }
+        return list;
+    }
+
+    public Map<String, Object> get(Long metric_id) {
+//        SearchResponse sr = client
+//                .prepareSearch("passport_checking")
+//                .setTypes("metrics")
+//                .setQuery(QueryBuilders.matchAllQuery())
+//                .addAggregation(
+//                        AggregationBuilders.range("range").field(Long.toString(metric_id)) )
+//                .execute().actionGet();
+//        List<Double> list  = new ArrayList<>();
+//        for (Aggregation rAggs : sr.getAggregations()) {
+//            Range range = (Range) rAggs;
+//            Map<String, Object> map = range.getMetaData();
+//            list.add(map)
+//        }
+//        return map;
+    }
 }

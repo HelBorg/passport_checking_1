@@ -7,69 +7,73 @@ class MetricsList extends Component {
 
     constructor(props) {
         super(props);
-        this.state = {metricsL: [], isLoading: true};
+        this.state = {metrics: [], isLoading: true};
         this.remove = this.remove.bind(this);
     }
 
     componentDidMount() {
         this.setState({isLoading: true});
 
-        fetch('/api/metrics')
+        fetch('api/metrics')
             .then(response => response.json())
-            .then(data => this.setState({metricsL: data, isLoading: false}));
+            .then(data => this.setState({metrics: data, isLoading: false}));
     }
 
     async remove(id) {
-        await fetch(`/`, {
+        await fetch(`/api/`, {
             method: 'DELETE',
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             }
         }).then(() => {
-            let updatedMetrics = [...this.state.metricsL].filter(i => i.id !== id);
-            this.setState({groups: updatedMetrics});
+            let updatedMetrics = [...this.state.metrics];
+            this.setState({metrics: updatedMetrics});
         });
     }
 
     render() {
-        const {metricsL, isLoading} = this.state;
+        const {metrics, isLoading} = this.state;
 
         if (isLoading) {
             return <p>Loading...</p>;
         }
 
-        const metricsList = metricsL.map(metrics => {
+        const metricList = metrics.map(metric => {
 
-                return <tr key={metrics.id}>
-                    <td>
-                        <ButtonGroup>
-                            <Button size="sm" color="primary" tag={Link} to={"/metrics/" + metrics.id}>Edit</Button>
-                            <Button size="sm" color="danger" onClick={() => this.remove(metrics.id)}>Delete</Button>
-                        </ButtonGroup>
-                    </td>
-                </tr>
 
-            });
+
+            const address = `${metric.address || ''} ${metric.city || ''} ${metric.stateOrProvince || ''}`;
+            return <tr key={metric.id}>
+                <td style={{whiteSpace: 'nowrap'}}>{metric.name}</td>
+                <td>{address}</td>
+                <td>{metric.events.map(event => {
+                    return <div key={event.id}>{new Intl.DateTimeFormat('en-US', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: '2-digit'
+                    }).format(new Date(event.date))}: {event.title}</div>
+                })}</td>
+                <td>
+                    <ButtonGroup>
+                        <Button size="sm" color="primary" tag={Link} to={"/metrics/" + metric.id}>Edit</Button>
+                        <Button size="sm" color="danger" onClick={() => this.remove(metric.id)}>Delete</Button>
+                    </ButtonGroup>
+                </td>
+            </tr>
+        });
 
         return (
             <div>
                 <AppNavbar/>
                 <Container fluid>
                     <div className="float-right">
-                        <Button color="success" tag={Link} to="/metrics/new">Add Group</Button>
+                        <Button color="success" tag={Link} to="/metrics/new">Add metric</Button>
                     </div>
                     <h3>My JUG Tour</h3>
                     <Table className="mt-4">
-                        <thead>
-                        <tr>
-                            <th width="20%">Name</th>
-                            <th>Location</th>
-                            <th width="10%">Actions</th>
-                        </tr>
-                        </thead>
                         <tbody>
-                        {metricsList}
+                        {metricList}
                         </tbody>
                     </Table>
                 </Container>
@@ -78,4 +82,4 @@ class MetricsList extends Component {
     }
 }
 
-export default MetricsList;
+export default MetricList;
