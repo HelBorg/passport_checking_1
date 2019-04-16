@@ -14,6 +14,7 @@ import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.aggregations.Aggregation;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.bucket.range.Range;
+import org.elasticsearch.search.aggregations.metrics.avg.Avg;
 import org.elasticsearch.search.aggregations.metrics.max.Max;
 import org.elasticsearch.search.aggregations.metrics.min.Min;
 
@@ -22,6 +23,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
+
+import static java.sql.Types.NULL;
 
 public class MetrService {
     private TransportClient client;
@@ -123,20 +126,27 @@ public class MetrService {
         return list;
     }
 
-    public Map<String, Object> get(Long metric_id) {
-//        SearchResponse sr = client
-//                .prepareSearch("passport_checking")
-//                .setTypes("metrics")
-//                .setQuery(QueryBuilders.matchAllQuery())
-//                .addAggregation(
-//                        AggregationBuilders.range("range").field(Long.toString(metric_id)) )
-//                .execute().actionGet();
-//        List<Double> list  = new ArrayList<>();
-//        for (Aggregation rAggs : sr.getAggregations()) {
-//            Range range = (Range) rAggs;
-//            Map<String, Object> map = range.getMetaData();
-//            list.add(map)
-//        }
-//        return map;
+    public Double getAverage(Long metric_id) {
+        SearchResponse sr = client
+                .prepareSearch("passport_checking")
+                .setTypes("metrics")
+                .setQuery(QueryBuilders.matchAllQuery())
+                .addAggregation(
+                        AggregationBuilders.avg("avg").field(Long.toString(metric_id)))
+                .execute().actionGet();
+        Avg avgA = (Avg) sr.getAggregations();
+        return avgA.getValue();
+    }
+
+    public Double getVariance(Long metric_id) {
+        SearchResponse sr = client
+                .prepareSearch("passport_checking")
+                .setTypes("metrics")
+                .setQuery(QueryBuilders.matchAllQuery())
+                .addAggregation(
+                        AggregationBuilders.extendedStats("variance").field(Long.toString(metric_id)))
+                .execute().actionGet();
+        Avg avgA = (Avg) sr.getAggregations();
+        return avgA.getValue();
     }
 }

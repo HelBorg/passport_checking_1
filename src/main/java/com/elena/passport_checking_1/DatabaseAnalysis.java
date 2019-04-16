@@ -35,43 +35,12 @@ public class DatabaseAnalysis {
         mController.exit();
     }
 
-//    public static void analyseMetrics(ConfigurableApplicationContext context) {
-//        MetrController mController = (MetrController) context.getBeanFactory().getBean("metrController");
-//
-//        HSSFWorkbook workbook = new HSSFWorkbook();
-//        HSSFSheet sheet = workbook.createSheet("Metrics");
-//
-//
-//        for (int i = 1; i < numMetr; i++) {
-//            List<Double> metric = mController.getMaxForMetric(Integer.toString(i));
-//            list.add(metrics);
-//        }
-//
-//
-//        int rownum = 0;
-//        int cellNum = 0;
-//        Cell cell;
-//        Row row;
-//
-//        // Data
-//        for (Metrics metrics : metricsList) {
-//            row = sheet.createRow(rownum);
-//            rownum++;
-//            for (Metric metric : metrics.getMetrics()) {
-//                cell = row.createCell(cellNum, CellType.STRING);
-//                cell.setCellValue((Integer)metric.getValue());
-//                cellNum++;
-//            }
-//            cellNum = 0;
-//        }
-//        File file = new File("C:/Users/mylet/IdeaProjects/passport_searching_1/files/metrics.xls");
-//        file.getParentFile().mkdirs();
-//
-//        FileOutputStream outFile = new FileOutputStream(file);
-//        workbook.write(outFile);
-//        System.out.println("Created file: " + file.getAbsolutePath());
-//        log.info("Data was successfully written into Excel");
-//    }
+    public static void calcMetrcsNewPass(ConfigurableApplicationContext context) {
+        PassController pController = (PassController) context.getBeanFactory().getBean("passController");
+        MetrController mController = (MetrController) context.getBeanFactory().getBean("metrController");
+
+        System.out.println("mController.getAverage(1L)");
+    }
 
     public static void writeMetricsIntoExcel(ConfigurableApplicationContext context) throws ExecutionException, InterruptedException, IOException {
         MetrController mController = (MetrController) context.getBeanFactory().getBean("metrController");

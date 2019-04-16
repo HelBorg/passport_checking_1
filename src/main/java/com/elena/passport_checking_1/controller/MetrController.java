@@ -36,7 +36,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
-import static java.sql.Types.NULL;
 
 @RestController
 @RequestMapping("/api")
@@ -108,6 +107,10 @@ public class MetrController {
 
     public List<Double> getMinForMetric(Long metric_id) {
         return service.getMin(metric_id);
+    }
+
+    public Double getAverage(Long metric_id) {
+        return service.getAverage(metric_id);
     }
 
     public void writeIntoExcel(List<Metrics> metricsList) throws IOException {
